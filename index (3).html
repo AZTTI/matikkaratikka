@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Matikkaratikka Matematiikkapeli</title>
+  <style>
+    body {
+      font-family: 'Comic Sans MS', cursive, sans-serif;
+      background: #ffe6f2;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+    .container {
+      background: #fff;
+      border: 3px dashed #ff99cc;
+      border-radius: 20px;
+      box-shadow: 0 4px 12px rgba(255,153,204,0.4);
+      width: 90%; max-width: 360px;
+      padding: 20px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .container::before {
+      content: '💕'; position: absolute;
+      top: -20px; right: -20px;
+      font-size: 3rem; opacity: 0.2;
+      transform: rotate(30deg);
+    }
+    .logo {
+      font-size: 3rem;
+      position: absolute;
+      top: 10px; left: 10px;
+    }
+    h1 {
+      margin: 10px 0;
+      font-size: 1.6rem;
+      color: #ff66aa;
+      letter-spacing: 1px;
+    }
+    h2, p {
+      margin: 8px 0;
+    }
+    .btn {
+      margin: 6px 3px;
+      padding: 12px 18px;
+      border: none;
+      border-radius: 30px;
+      background: linear-gradient(135deg, #ff99cc, #ff66aa);
+      color: #fff;
+      font-size: 1rem;
+      font-weight: bold;
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(255,102,170,0.5);
+    }
+    .option { display: block; width: 100%; }
+    #feedback {
+      margin-top: 15px; font-weight: bold;
+      min-height: 1.5em; color: #ff3385;
+    }
+    #sticker { font-size: 4.5rem; margin-top: 20px; }
+    @media (max-width: 480px) {
+      .btn { padding: 10px 14px; font-size: 0.9rem; }
+      .container { padding: 15px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="logo">🚋</div>
+    <button id="langBtn" class="btn" style="position:absolute; top:10px; right:10px;">Suomeksi</button>
+    <h1 id="title">Matikkaratikka Math Game 💗</h1>
+
+    <div id="menu">
+      <p id="menuText">Choose topic:</p>
+      <button class="btn topicBtn" data-topic="1">1. Addition</button>
+      <button class="btn topicBtn" data-topic="2">2. Subtraction</button>
+      <button class="btn topicBtn" data-topic="3">3. Multiplication</button>
+    </div>
+
+    <div id="sublevelMenu">
+      <p id="levelText">Choose level:</p>
+      <button class="btn levelBtn" data-level="1">1–10</button>
+      <button class="btn levelBtn" data-level="2">1–100</button>
+      <button class="btn levelBtn" data-level="3">100–1000</button>
+      <button class="btn levelBtn" data-level="4">Compound</button>
+    </div>
+
+    <div id="game">
+      <h2 id="questionNum"></h2>
+      <p id="questionText"></p>
+      <div id="options"></div>
+      <div id="openInput" style="display:none; margin-top:10px;">
+        <input type="number" id="answerInput" style="padding:8px; border-radius:5px; border:1px solid #ccc; width:60%;" />
+        <button id="submitInput" class="btn">Submit</button>
+      </div>
+      <div id="feedback"></div>
+      <button id="nextBtn" class="btn" style="display:none;">Next</button>
+    </div>
+
+    <div id="result">
+      <h2 id="resultText"></h2>
+      <div id="sticker"></div>
+      <button id="restart" class="btn">Restart</button>
+    </div>
+  </div>
+
+  <script>
+    const textData = {
+      en: {
+        title: 'Matikkaratikka Math Game 💗', menu:'Choose topic:', level:'Choose level:', next:'Next', submit:'Submit', correct:'Correct! 👍', wrong:'Oops, wrong. ', result:'Your score', restart:'Restart', langBtn:'Suomeksi'
+      },
+      fi: {
+        title: 'Matikkaratikka Matematiikkapeli 💗', menu:'Valitse aihe:', level:'Valitse taso:', next:'Seuraava', submit:'Vahvista', correct:'Oikein! 👍', wrong:'Hups, väärin. ', result:'Pisteesi', restart:'Uudelleen', langBtn:'English'
+      }
+    };
+    let lang='en', topic, level, questions=[], current=0, score=0;
+
+    const menu = document.getElementById('menu');
+    const sublevelMenu = document.getElementById('sublevelMenu');
+    const game = document.getElementById('game');
+    const resultDiv = document.getElementById('result');
+    const titleEl = document.getElementById('title');
+    const menuText = document.getElementById('menuText');
+    const levelText = document.getElementById('levelText');
+    const questionNum = document.getElementById('questionNum');
+    const questionText = document.getElementById('questionText');
+    const optionsDiv = document.getElementById('options');
+    const openInput = document.getElementById('openInput');
+    const answerInput = document.getElementById('answerInput');
+    const submitInput = document.getElementById('submitInput');
+    const feedbackDiv = document.getElementById('feedback');
+    const nextBtn = document.getElementById('nextBtn');
+    const resultText = document.getElementById('resultText');
+    const stickerDiv = document.getElementById('sticker');
+    const restartBtn = document.getElementById('restart');
+    const langBtn = document.getElementById('langBtn');
+
+    function updateUI() {
+      const t = textData[lang];
+      titleEl.innerText = t.title;
+      menuText.innerText = t.menu;
+      levelText.innerText = t.level;
+      nextBtn.innerText = t.next;
+      submitInput.innerText = t.submit;
+      restartBtn.innerText = t.restart;
+      langBtn.innerText = t.langBtn;
+    }
+
+    function generateQuestions() {
+      const qs=[];
+      for(let i=0;i<5;i++){ let q,a;
+        if(level<4){
+          const min=level===1?1: level===2?1:100;
+          const max=level===1?10: level===2?100:1000;
+          const x=Math.floor(Math.random()*(max-min+1))+min;
+          const y=Math.floor(Math.random()*(max-min+1))+min;
+          if(topic==1){q=`${x} + ${y} = ?`; a=x+y;}
+          else if(topic==2){const big=Math.max(x,y), small=Math.min(x,y); q=`${big} - ${small} = ?`; a=big-small;}
+          else{q=`${x} × ${y} = ?`; a=x*y;}
+        } else {
+          const a1=Math.floor(Math.random()*10)+1;
+          const b1=Math.floor(Math.random()*10)+1;
+          const c1=Math.floor(Math.random()*10)+1;
+          if(topic==1){q=`${a1} + ${b1} × ${c1} = ?`; a=a1 + b1*c1;}
+          else if(topic==2){q=`${a1} - ${b1} × ${c1} = ?`; a=a1 - b1*c1; if(a<0){q=`${a1+b1*c1} - ${b1} × ${c1} = ?`; a=(a1+b1*c1)-b1*c1;}}
+          else{q=`${a1} × ${b1} + ${c1} = ?`; a=a1*b1 + c1;}
+        }
+        if(Math.random()<0.5){const opts=new Set([a]); while(opts.size<3...
