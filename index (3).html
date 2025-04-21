@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Matikkaratikka Matematiikkapeli</title>
   <style>
     body {
@@ -20,23 +20,36 @@
       border: 3px dashed #ff99cc;
       border-radius: 20px;
       box-shadow: 0 4px 12px rgba(255,153,204,0.4);
-      width: 90%; max-width: 360px;
+      width: 90%;
+      max-width: 360px;
       padding: 20px;
       text-align: center;
       position: relative;
       overflow: hidden;
     }
     .container::before {
-      content: '💕'; position: absolute;
-      top: -20px; right: -20px;
-      font-size: 3rem; opacity: 0.2;
+      content: '💕';
+      position: absolute;
+      top: -20px;
+      right: -20px;
+      font-size: 3rem;
+      opacity: 0.2;
       transform: rotate(30deg);
     }
     .logo {
       font-size: 3rem;
       position: absolute;
-      top: 10px; left: 10px;
+      top: 10px;
+      left: 10px;
     }
+
+    /* Hide screens by default */
+    #sublevelMenu,
+    #game,
+    #result {
+      display: none;
+    }
+
     h1 {
       margin: 10px 0;
       font-size: 1.6rem;
@@ -62,15 +75,28 @@
       transform: translateY(-2px);
       box-shadow: 0 4px 8px rgba(255,102,170,0.5);
     }
-    .option { display: block; width: 100%; }
-    #feedback {
-      margin-top: 15px; font-weight: bold;
-      min-height: 1.5em; color: #ff3385;
+    .option {
+      display: block;
+      width: 100%;
     }
-    #sticker { font-size: 4.5rem; margin-top: 20px; }
+    #feedback {
+      margin-top: 15px;
+      font-weight: bold;
+      min-height: 1.5em;
+      color: #ff3385;
+    }
+    #sticker {
+      font-size: 4.5rem;
+      margin-top: 20px;
+    }
     @media (max-width: 480px) {
-      .btn { padding: 10px 14px; font-size: 0.9rem; }
-      .container { padding: 15px; }
+      .btn {
+        padding: 10px 14px;
+        font-size: 0.9rem;
+      }
+      .container {
+        padding: 15px;
+      }
     }
   </style>
 </head>
@@ -104,7 +130,7 @@
         <button id="submitInput" class="btn">Submit</button>
       </div>
       <div id="feedback"></div>
-      <button id="nextBtn" class="btn" style="display:none;">Next</button>
+      <button id="nextBtn" class="btn">Next</button>
     </div>
 
     <div id="result">
@@ -117,13 +143,31 @@
   <script>
     const textData = {
       en: {
-        title: 'Matikkaratikka Math Game 💗', menu:'Choose topic:', level:'Choose level:', next:'Next', submit:'Submit', correct:'Correct! 👍', wrong:'Oops, wrong. ', result:'Your score', restart:'Restart', langBtn:'Suomeksi'
+        title: 'Matikkaratikka Math Game 💗',
+        menu: 'Choose topic:',
+        level: 'Choose level:',
+        next: 'Next',
+        submit: 'Submit',
+        correct: 'Correct! 👍',
+        wrong: 'Oops, wrong. ',
+        result: 'Your score',
+        restart: 'Restart',
+        langBtn: 'Suomeksi'
       },
       fi: {
-        title: 'Matikkaratikka Matematiikkapeli 💗', menu:'Valitse aihe:', level:'Valitse taso:', next:'Seuraava', submit:'Vahvista', correct:'Oikein! 👍', wrong:'Hups, väärin. ', result:'Pisteesi', restart:'Uudelleen', langBtn:'English'
+        title: 'Matikkaratikka Matematiikkapeli 💗',
+        menu: 'Valitse aihe:',
+        level: 'Valitse taso:',
+        next: 'Seuraava',
+        submit: 'Vahvista',
+        correct: 'Oikein! 👍',
+        wrong: 'Hups, väärin. ',
+        result: 'Pisteesi',
+        restart: 'Uudelleen',
+        langBtn: 'English'
       }
     };
-    let lang='en', topic, level, questions=[], current=0, score=0;
+    let lang = 'en', topic, level, questions = [], current = 0, score = 0;
 
     const menu = document.getElementById('menu');
     const sublevelMenu = document.getElementById('sublevelMenu');
@@ -157,48 +201,47 @@
     }
 
     function generateQuestions() {
-      const qs=[];
-      for(let i=0;i<5;i++){ let q,a;
-        if(level<4){
-          const min=level===1?1: level===2?1:100;
-          const max=level===1?10: level===2?100:1000;
-          const x=Math.floor(Math.random()*(max-min+1))+min;
-          const y=Math.floor(Math.random()*(max-min+1))+min;
-          if(topic==1){q=`${x} + ${y} = ?`; a=x+y;}
-          else if(topic==2){const big=Math.max(x,y), small=Math.min(x,y); q=`${big} - ${small} = ?`; a=big-small;}
-          else{q=`${x} × ${y} = ?`; a=x*y;}
+      const qs = [];
+      for (let i = 0; i < 5; i++) {
+        let q, a;
+        if (level < 4) {
+          const min = level === 1 ? 1 : level === 2 ? 1 : 100;
+          const max = level === 1 ? 10 : level === 2 ? 100 : 1000;
+          const x = Math.floor(Math.random() * (max - min + 1)) + min;
+          const y = Math.floor(Math.random() * (max - min + 1)) + min;
+          if (topic == 1) { q = `${x} + ${y} = ?`; a = x + y; }
+          else if (topic == 2) { const big = Math.max(x,y), small = Math.min(x,y); q = `${big} - ${small} = ?`; a = big - small; }
+          else { q = `${x} × ${y} = ?`; a = x * y; }
         } else {
-          const a1=Math.floor(Math.random()*10)+1;
-          const b1=Math.floor(Math.random()*10)+1;
-          const c1=Math.floor(Math.random()*10)+1;
-          if(topic==1){q=`${a1} + ${b1} × ${c1} = ?`; a=a1 + b1*c1;}
-          else if(topic==2){q=`${a1} - ${b1} × ${c1} = ?`; a=a1 - b1*c1; if(a<0){q=`${a1+b1*c1} - ${b1} × ${c1} = ?`; a=(a1+b1*c1)-b1*c1;}}
-          else{q=`${a1} × ${b1} + ${c1} = ?`; a=a1*b1 + c1;}
+          const a1 = Math.floor(Math.random()*10)+1;
+          const b1 = Math.floor(Math.random()*10)+1;
+          const c1 = Math.floor(Math.random()*10)+1;
+          if      (topic == 1) { q = `${a1} + ${b1} × ${c1} = ?`; a = a1 + b1*c1; }
+          else if (topic == 2) { q = `${a1} - ${b1} × ${c1} = ?`; a = a1 - b1*c1; if(a<0){ q = `${a1+b1*c1} - ${b1} × ${c1} = ?`; a=(a1+b1*c1)-b1*c1; }}
+          else                 { q = `${a1} × ${b1} + ${c1} = ?`; a = a1*b1 + c1; }
         }
-        if(Math.random()<0.5){const opts=new Set([a]); while(opts.size<3){const d=Math.floor(Math.random()*5)+1; opts.add(a + (Math.random()<0.5?-d:d));} qs.push({type:'mcq',q,options:shuffle([...opts]),a});}
-        else qs.push({type:'open',q,a});
+        if (Math.random() < 0.5) {
+          const opts = new Set([a]);
+          while (opts.size < 3) {
+            const d = Math.floor(Math.random()*5)+1;
+            opts.add(a + (Math.random()<0.5 ? -d : d));
+          }
+          qs.push({type:'mcq', q, options:shuffle([...opts]), a});
+        } else {
+          qs.push({type:'open', q, a});
+        }
       }
       return qs;
     }
-    function shuffle(a){return a.sort(()=>0.5-Math.random());}
+    function shuffle(arr) { return arr.sort(() => 0.5 - Math.random()); }
 
-    function showQuestion(){
-      const obj=questions[current];
-      questionNum.innerText=`${current+1}/5`;
-      questionText.innerText=obj.q;
-      feedbackDiv.innerText=''; nextBtn.style.display='none';
-      if(obj.type==='mcq'){ openInput.style.display='none'; optionsDiv.innerHTML='';
-        obj.options.forEach(opt=>{const b=document.createElement('button'); b.className='btn option'; b.innerText=opt; b.onclick=()=>checkAnswer(opt,obj.a); optionsDiv.appendChild(b);});
-      } else { optionsDiv.innerHTML=''; openInput.style.display='block'; submitInput.onclick=()=>checkAnswer(Number(answerInput.value),obj.a); }
-    }
-    function checkAnswer(g,c){ const t=textData[lang]; feedbackDiv.innerText=(g===c? t.correct : t.wrong + `(${c})`); if(g===c) score++; nextBtn.style.display='inline-block'; document.querySelectorAll('.option').forEach(b=>b.disabled=true); submitInput.disabled=true; nextBtn.onclick=()=>{ current<4? (answerInput.value='', submitInput.disabled=false, showQuestion(), current++): endGame();}; }
-    function endGame(){ game.style.display='none'; resultDiv.style.display='block'; const t=textData[lang]; resultText.innerText=`${t.result}: ${score}/5`; const stickers=['🦊','🐼','🐰','🦄','🐨']; stickerDiv.innerText=stickers[Math.floor(Math.random()*stickers.length)]; }
-
-    document.querySelectorAll('.topicBtn').forEach(b=>b.onclick=()=>{ topic=b.dataset.topic; menu.style.display='none'; sublevelMenu.style.display='block'; });
-    document.querySelectorAll('.levelBtn').forEach(b=>b.onclick=()=>{ level=+b.dataset.level; sublevelMenu.style.display='none'; game.style.display='block'; questions=generateQuestions(); showQuestion(); });
-    restartBtn.onclick=()=>{ resultDiv.style.display='none'; menu.style.display='block'; current=0; score=0; };
-    langBtn.onclick=()=>{ lang=lang==='en'?'fi':'en'; updateUI(); };
-    updateUI();
-  </script>
-</body>
-</html>
+    function showQuestion() {
+      const obj = questions[current];
+      questionNum.innerText = `${current+1}/5`;
+      questionText.innerText = obj.q;
+      feedbackDiv.innerText = '';
+      nextBtn.style.display = 'none';
+      if (obj.type==='mcq') {
+        openInput.style.display='none'; optionsDiv.innerHTML='';
+        obj.options.forEach(opt => {
+          const btn = document.createElement('button'); btn.className='btn option'; btn.innerText=opt; btn.onclick=()=>
